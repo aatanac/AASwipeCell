@@ -117,6 +117,9 @@ extension AASwipeTableViewCell {
     }
     
     @objc func handlePan(gesture:UIPanGestureRecognizer) {
+        guard self.buttons.count > 0 else {
+            return
+        }
         
         let location = gesture.location(in: self.contentView)
         

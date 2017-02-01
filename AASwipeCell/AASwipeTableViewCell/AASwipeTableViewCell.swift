@@ -40,6 +40,12 @@ class AASwipeTableViewCell: UITableViewCell {
         }
     }
     
+    var useOriginalSize = false {
+        didSet {
+            self.configureButtonsLayout()
+        }
+    }
+    
     //type of animation
     var type:Type = .´default´ {
         didSet {
@@ -131,15 +137,22 @@ class AASwipeTableViewCell: UITableViewCell {
     
     private func configureButtonsLayout() {
         
-        var buttonWidth = self.contentView.frame.size.height
-        var buttonViewWidth = CGFloat(self.buttons.count) * buttonWidth
-        
-        //if cell height is to big buttons will stretch out of bounds and will be wider than contentView width
-        //this 'if' statement prevents that with resizing buttons
-        if buttonViewWidth > self.contentView.frame.size.width || buttonWidth > self.contentView.frame.size.width / 3  {
-            buttonWidth = self.contentView.frame.size.width / CGFloat(self.buttons.count) / 1.8
+        var buttonWidth:CGFloat = 0
+        var buttonViewWidth:CGFloat = 0
+        if self.useOriginalSize {
+            let _ = self.buttons.map{ buttonViewWidth += $0.frame.size.width }
+            
+            
+        } else {
+            buttonWidth  = self.contentView.frame.size.height
             buttonViewWidth = CGFloat(self.buttons.count) * buttonWidth
             
+            //if cell height is to big buttons will stretch out of bounds and will be wider than contentView width
+            //this 'if' statement prevents that with resizing buttons
+            if buttonViewWidth > self.contentView.frame.size.width || buttonWidth > self.contentView.frame.size.width / 3  {
+                buttonWidth = self.contentView.frame.size.width / CGFloat(self.buttons.count) / 1.8
+                buttonViewWidth = CGFloat(self.buttons.count) * buttonWidth
+            }
         }
         
         //´default´ type sets buttons containerView in fixed under the containerView
@@ -149,15 +162,21 @@ class AASwipeTableViewCell: UITableViewCell {
         
         if self.type == .slide {
             for (i, button) in self.buttons.reversed().enumerated() {
-                button.frame = CGRect(x: 0, y: 0, width: buttonWidth, height: self.buttonsContainerView.frame.height)
+                let buttonWidtInLoop = self.useOriginalSize ? button.frame.size.width : buttonWidth
+                button.frame = CGRect(x: 0, y: 0, width: buttonWidtInLoop, height: self.buttonsContainerView.frame.height)
+                
                 if self.buttonBackgrounds.count > i {
-                    self.buttonBackgrounds[i].frame = CGRect(x: CGFloat(i) * buttonWidth, y: 0, width: buttonWidth, height: self.buttonsContainerView.frame.height)
+                    let xPostion = i > 0 ? self.buttonBackgrounds[i-1].frame.origin.x + self.buttonBackgrounds[i-1].frame.size.width : 0
+                    self.buttonBackgrounds[i].frame = CGRect(x: xPostion, y: 0, width: button.frame.size.width, height: self.buttonsContainerView.frame.height)
                 }
+                
             }
             
         } else {
             for (i, button) in self.buttons.enumerated() {
-                button.frame = CGRect(x: CGFloat(i) * buttonWidth, y: 0, width: buttonWidth, height: self.buttonsContainerView.frame.height)
+                let buttonWidtInLoop = self.useOriginalSize ? button.frame.size.width : buttonWidth
+                let xPostion = i > 0 ? self.buttons[i-1].frame.origin.x + self.buttons[i-1].frame.size.width : 0
+                button.frame = CGRect(x: xPostion, y: 0, width: buttonWidtInLoop, height: self.buttonsContainerView.frame.height)
             }
         }
         

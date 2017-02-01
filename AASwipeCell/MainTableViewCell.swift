@@ -27,7 +27,7 @@ class MainTableViewCell: AASwipeTableViewCell {
         let addButton = UIButton()
         addButton.setTitle("Add", for: .normal)
         addButton.backgroundColor = UIColor.green
-        
+
         let editButton = UIButton()
         editButton.setTitle("Edit", for: .normal)
         editButton.backgroundColor = UIColor.blue
@@ -40,22 +40,29 @@ class MainTableViewCell: AASwipeTableViewCell {
     }
     
     func configureImageButtons() {
+        //self.useOriginalSize = true
+        self.type = .slide
+        
         let addButton = UIButton()
+        addButton.frame.size.width = 30
         addButton.setImage(#imageLiteral(resourceName: "addIcon"), for: .normal)
         addButton.backgroundColor = UIColor.green
         addButton.imageView?.contentMode = .scaleAspectFit
 
         let editButton = UIButton()
+        editButton.frame.size.width = 40
         editButton.setImage(#imageLiteral(resourceName: "editIcon"), for: .normal)
         editButton.backgroundColor = UIColor.blue
         editButton.imageView?.contentMode = .scaleAspectFit
         
         let deleteButton = UIButton()
+        deleteButton.frame.size.width = 50
         deleteButton.setImage(#imageLiteral(resourceName: "deleteIcon"), for: .normal)
         deleteButton.backgroundColor = UIColor.red
         deleteButton.imageView?.contentMode = .scaleAspectFit
         
         let sendButton = UIButton()
+        sendButton.frame.size.width = 60
         sendButton.setImage(#imageLiteral(resourceName: "sendIcon"), for: .normal)
         sendButton.backgroundColor = UIColor.gray
         sendButton.imageView?.contentMode = .scaleAspectFit

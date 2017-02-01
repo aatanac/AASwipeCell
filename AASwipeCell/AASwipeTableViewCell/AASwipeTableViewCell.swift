@@ -8,6 +8,12 @@
 
 import UIKit
 
+enum Type {
+    case ´default´
+    case trail
+    case slide
+}
+
 class AASwipeTableViewCell: UITableViewCell {
     
     //tracking start location for calculating moved distance of touch
@@ -19,6 +25,14 @@ class AASwipeTableViewCell: UITableViewCell {
             self.layoutSubviews()
         }
     }
+    
+    //type of animation
+    var type:Type = .´default´ {
+        didSet {
+            self.configureButtonsLayout()
+        }
+    }
+    
     //custom content insets for buttonsContainer
     var buttonsContainerViewInset:UIEdgeInsets = .zero {
         didSet {
@@ -98,7 +112,10 @@ class AASwipeTableViewCell: UITableViewCell {
             
         }
         
-        self.buttonsContainerView.frame = CGRect(x: self.frame.width - buttonViewWidth - self.buttonsContainerViewInset.right, y: self.buttonsContainerViewInset.top, width: buttonViewWidth, height: self.frame.size.height - self.buttonsContainerViewInset.top - self.buttonsContainerViewInset.bottom)
+        //default position sets buttons containerView in static place under containerView
+        let buttonXPosition = self.frame.width - (self.type == .´default´ ? buttonViewWidth : 0) - self.buttonsContainerViewInset.right
+        
+        self.buttonsContainerView.frame = CGRect(x: buttonXPosition, y: self.buttonsContainerViewInset.top, width: buttonViewWidth, height: self.frame.size.height - self.buttonsContainerViewInset.top - self.buttonsContainerViewInset.bottom)
         for (i, button) in buttons.enumerated() {
             button.frame = CGRect(x: CGFloat(i) * buttonSize, y: 0, width: buttonSize, height: self.buttonsContainerView.frame.height)
         }
@@ -161,8 +178,13 @@ class AASwipeTableViewCell: UITableViewCell {
             self.contentView.frame.origin.x = -buttonsContainerView.frame.size.width
         default:
             self.contentView.frame.origin.x += movedDistance
-            self.updateConstraintsIfNeeded()
         }
+        
+        if self.type == .trail {
+            self.setTrailButtonsContainerPosition()
+        }
+        
+        self.updateConstraintsIfNeeded()
         
     }
     
@@ -174,7 +196,6 @@ class AASwipeTableViewCell: UITableViewCell {
         table.isScrollEnabled = true
         
         let velocity = gestureRecognizer.velocity(in: self.contentView)
-        print(velocity)
         
         var isCellSwipped = self.contentView.frame.origin.x < -buttonsContainerView.frame.size.width / 2
         if velocity.x > self.frame.size.width {
@@ -200,10 +221,19 @@ class AASwipeTableViewCell: UITableViewCell {
         
         UIView.animate(withDuration: 0.5, delay: 0.0, usingSpringWithDamping: 0.5, initialSpringVelocity: 1.0, options: .allowUserInteraction, animations: {
             self.contentView.frame.origin.x = customBackgroundPosition
+            if self.type == .trail {
+                self.setTrailButtonsContainerPosition()
+            }
+            
             self.updateConstraintsIfNeeded()
         }, completion: nil)
         
         
+    }
+    
+    private func setTrailButtonsContainerPosition() {
+        self.buttonsContainerView.frame.origin.x = self.contentView.frame.origin.x + self.contentView.frame.size.width
+        print(self.buttonsContainerView.frame)
     }
     
 }

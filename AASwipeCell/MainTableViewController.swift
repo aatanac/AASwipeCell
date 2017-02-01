@@ -39,6 +39,7 @@ class MainTableViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: "MainTableViewCell", for: indexPath) as! MainTableViewCell
         cell.label.text = self.textArray[indexPath.row]
         cell.contentView.backgroundColor = UIColor.white
+        cell.type = .trail
         
         if indexPath.row % 2 == 0 {
             cell.configureImageButtons()

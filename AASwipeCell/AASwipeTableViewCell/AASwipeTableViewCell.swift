@@ -58,10 +58,10 @@ class AASwipeTableViewCell: UITableViewCell {
     //array of buttons that will be rendered and set with superView under contentView
     fileprivate var buttons:[UIView] = [] {
         didSet {
-            self.setupButtonBackgroundViews()
             let _ = self.buttons.map{
                 self.buttonsContainerView.addSubview($0)
             }
+            self.setupButtonBackgroundViews()
         }
     }
     
@@ -180,7 +180,7 @@ class AASwipeTableViewCell: UITableViewCell {
     
     fileprivate func setupButtonBackgroundViews() {
         
-        if type == .slide && self.buttonBackgrounds.count != self.buttons.count {
+        if type == .slide {
             self.buttonBackgrounds.removeAll()
             self.buttonBackgrounds = self.buttons.map({ (button) -> UIView in
                 let view = UIView()

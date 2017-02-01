@@ -26,7 +26,7 @@ class MainTableViewCell: AASwipeTableViewCell {
     func configureButtons() {
         let addButton = UIButton()
         addButton.setTitle("Add", for: .normal)
-        addButton.backgroundColor = UIColor.red
+        addButton.backgroundColor = UIColor.green
         
         let editButton = UIButton()
         editButton.setTitle("Edit", for: .normal)
@@ -42,7 +42,7 @@ class MainTableViewCell: AASwipeTableViewCell {
     func configureImageButtons() {
         let addButton = UIButton()
         addButton.setImage(#imageLiteral(resourceName: "addIcon"), for: .normal)
-        addButton.backgroundColor = UIColor.red
+        addButton.backgroundColor = UIColor.green
         addButton.imageView?.contentMode = .scaleAspectFit
 
         let editButton = UIButton()
@@ -52,7 +52,7 @@ class MainTableViewCell: AASwipeTableViewCell {
         
         let deleteButton = UIButton()
         deleteButton.setImage(#imageLiteral(resourceName: "deleteIcon"), for: .normal)
-        deleteButton.backgroundColor = UIColor.yellow
+        deleteButton.backgroundColor = UIColor.red
         deleteButton.imageView?.contentMode = .scaleAspectFit
         
         let sendButton = UIButton()

@@ -43,6 +43,7 @@ class AASwipeTableViewCell: UITableViewCell {
     //type of animation
     var type:Type = .´default´ {
         didSet {
+            self.setupButtonBackgroundViews()
             self.configureButtonsLayout()
         }
     }
@@ -57,9 +58,14 @@ class AASwipeTableViewCell: UITableViewCell {
     //array of buttons that will be rendered and set with superView under contentView
     fileprivate var buttons:[UIView] = [] {
         didSet {
-            let _ = self.buttons.map{self.buttonsContainerView.addSubview($0)}
+            self.setupButtonBackgroundViews()
+            let _ = self.buttons.map{
+                self.buttonsContainerView.addSubview($0)
+            }
         }
     }
+    
+    fileprivate var buttonBackgrounds:[UIView] = []
     
     fileprivate var startButtonViewPosition:CGFloat = 0
     
@@ -96,6 +102,14 @@ class AASwipeTableViewCell: UITableViewCell {
         super.prepareForReuse()
         //removing buttons to prepare clean view for new ones
         let _ = self.buttons.map{$0.removeFromSuperview()}
+        let _ = self.buttonBackgrounds.map{$0.removeFromSuperview()}
+        self.contentViewInset = .zero
+        self.buttonsContainerViewInset = .zero
+        self.startButtonViewPosition = 0
+        self.type = .´default´
+        self.startOriginX = 0
+        self.animator = Animator(duration: 0.5, delay: 0.0, springDumping: 0.5, springVelocity:1.0, initialSpring: 1.0, options:.allowUserInteraction)
+        
     }
     
     override func layoutSubviews() {
@@ -117,14 +131,14 @@ class AASwipeTableViewCell: UITableViewCell {
     
     private func configureButtonsLayout() {
         
-        var buttonSize = self.contentView.frame.size.height
-        var buttonViewWidth = CGFloat(self.buttons.count) * buttonSize
+        var buttonWidth = self.contentView.frame.size.height
+        var buttonViewWidth = CGFloat(self.buttons.count) * buttonWidth
         
         //if cell height is to big buttons will stretch out of bounds and will be wider than contentView width
         //this 'if' statement prevents that with resizing buttons
-        if buttonViewWidth > self.contentView.frame.size.width || buttonSize > self.contentView.frame.size.width / 3  {
-            buttonSize = self.contentView.frame.size.width / CGFloat(self.buttons.count) / 1.8
-            buttonViewWidth = CGFloat(self.buttons.count) * buttonSize
+        if buttonViewWidth > self.contentView.frame.size.width || buttonWidth > self.contentView.frame.size.width / 3  {
+            buttonWidth = self.contentView.frame.size.width / CGFloat(self.buttons.count) / 1.8
+            buttonViewWidth = CGFloat(self.buttons.count) * buttonWidth
             
         }
         
@@ -134,12 +148,16 @@ class AASwipeTableViewCell: UITableViewCell {
         self.buttonsContainerView.frame = CGRect(x: self.startButtonViewPosition, y: self.buttonsContainerViewInset.top, width: buttonViewWidth, height: self.frame.size.height - self.buttonsContainerViewInset.top - self.buttonsContainerViewInset.bottom)
         
         if self.type == .slide {
-            let _ = self.buttons.reversed().map{
-                $0.frame = CGRect(x: 0, y: 0, width: buttonSize, height: self.buttonsContainerView.frame.height)
+            for (i, button) in self.buttons.reversed().enumerated() {
+                button.frame = CGRect(x: 0, y: 0, width: buttonWidth, height: self.buttonsContainerView.frame.height)
+                if self.buttonBackgrounds.count > i {
+                    self.buttonBackgrounds[i].frame = CGRect(x: CGFloat(i) * buttonWidth, y: 0, width: buttonWidth, height: self.buttonsContainerView.frame.height)
+                }
             }
+            
         } else {
             for (i, button) in self.buttons.enumerated() {
-                button.frame = CGRect(x: CGFloat(i) * buttonSize, y: 0, width: buttonSize, height: self.buttonsContainerView.frame.height)
+                button.frame = CGRect(x: CGFloat(i) * buttonWidth, y: 0, width: buttonWidth, height: self.buttonsContainerView.frame.height)
             }
         }
         
@@ -156,6 +174,20 @@ class AASwipeTableViewCell: UITableViewCell {
         for (i, button) in self.buttons.enumerated() {
             let buttonPosition = CGFloat(i) * button.frame.size.width
             button.frame.origin.x = buttonPosition * movedPercentage
+        }
+        
+    }
+    
+    fileprivate func setupButtonBackgroundViews() {
+        
+        if type == .slide && self.buttonBackgrounds.count != self.buttons.count {
+            self.buttonBackgrounds.removeAll()
+            self.buttonBackgrounds = self.buttons.map({ (button) -> UIView in
+                let view = UIView()
+                view.backgroundColor = button.backgroundColor
+                self.buttonsContainerView.insertSubview(view, belowSubview: button)
+                return view
+            })
         }
         
     }
@@ -213,8 +245,8 @@ class AASwipeTableViewCell: UITableViewCell {
         switch swipedViewLocation{
         case let value where value >= 0:
             self.contentView.frame.origin.x = self.contentViewInset.left
-        case let value where value < -self.buttonsContainerView.frame.size.width:
-            self.contentView.frame.origin.x = -self.buttonsContainerView.frame.size.width
+        case let value where value < -self.buttonsContainerView.frame.size.width + self.contentViewInset.left:
+            self.contentView.frame.origin.x = -self.buttonsContainerView.frame.size.width + self.contentViewInset.left
         default:
             self.contentView.frame.origin.x += movedDistance
         }
@@ -257,7 +289,7 @@ class AASwipeTableViewCell: UITableViewCell {
         var customBackgroundPosition:CGFloat = self.contentViewInset.left
         
         if toLeft {
-            customBackgroundPosition = -self.buttonsContainerView.frame.width
+            customBackgroundPosition = -self.buttonsContainerView.frame.width + self.contentViewInset.left
         }
         
         

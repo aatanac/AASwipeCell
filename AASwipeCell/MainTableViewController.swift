@@ -43,9 +43,18 @@ class MainTableViewController: UITableViewController {
         if indexPath.row % 2 == 0 {
             cell.configureImageButtons()
             cell.type = .slide
-        } else {
+            if indexPath.row == 0 {
+                cell.contentViewInset = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
+                cell.buttonsContainerViewInset = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
+            }
+
+
+        } else if indexPath.row % 3 == 0 {
             cell.configureButtons()
             cell.type = .´default´
+        } else {
+            cell.configureImageButtons()
+            cell.type = .trail
         }
         
         // Configure the cell...

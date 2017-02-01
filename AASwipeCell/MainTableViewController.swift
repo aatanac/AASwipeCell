@@ -37,7 +37,6 @@ class MainTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "MainTableViewCell", for: indexPath) as! MainTableViewCell
-        cell.configureSwipe()
         cell.label.text = self.textArray[indexPath.row]
         cell.contentView.backgroundColor = UIColor.white
         

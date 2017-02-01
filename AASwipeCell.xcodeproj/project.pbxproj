@@ -528,6 +528,7 @@
 				2C80345C1E411E6200FF3FB7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		2C80345D1E411E6200FF3FB7 /* Build configuration list for PBXNativeTarget "AASwipeCellTests" */ = {
 			isa = XCConfigurationList;
@@ -536,6 +537,7 @@
 				2C80345F1E411E6200FF3FB7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		2C8034601E411E6200FF3FB7 /* Build configuration list for PBXNativeTarget "AASwipeCellUITests" */ = {
 			isa = XCConfigurationList;
@@ -544,6 +546,7 @@
 				2C8034621E411E6200FF3FB7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

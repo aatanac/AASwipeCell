@@ -14,7 +14,6 @@ class MainTableViewCell: AASwipeTableViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        
         // Initialization code
     }
 

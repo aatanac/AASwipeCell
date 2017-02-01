@@ -13,10 +13,6 @@ class AASwipeTableViewCell: UITableViewCell {
     //tracking start location for calculating moved distance of touch
     fileprivate var startOriginX:CGFloat = 0
     
-    //tracking location of last touch to prevent swiping cell and tableView scrolling in same time
-    fileprivate var oldTouchPoint = CGPoint(x: 0, y: 0)
-    
-    
     //custom content insets for contentView
     var contentViewInset:UIEdgeInsets = .zero {
         didSet {
@@ -31,7 +27,7 @@ class AASwipeTableViewCell: UITableViewCell {
     }
     
     //array of buttons that will be rendered and set with superView under contentView
-    fileprivate var buttons:[UIButton] = [] {
+    fileprivate var buttons:[UIView] = [] {
         didSet {
             let _ = self.buttons.map{self.buttonsContainerView.addSubview($0)}
         }
@@ -42,19 +38,28 @@ class AASwipeTableViewCell: UITableViewCell {
         
     override func awakeFromNib() {
         super.awakeFromNib()
+        self.configureCell()
+        
+    }
+    
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.configureCell()
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        
+    }
+    
+    fileprivate func configureCell() {
+        self.configureSwipe()
         
         self.insertSubview(self.buttonsContainerView, belowSubview: self.contentView)
         //set subViews in to be cliped as contanerView(round corners..)
         self.buttonsContainerView.clipsToBounds = true
         //hardcoded because of contentView selecting color color
         self.selectionStyle = .none
-    }
-
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-        
-        
-        // Configure the view for the selected state
     }
     
     override func prepareForReuse() {
@@ -99,24 +104,21 @@ class AASwipeTableViewCell: UITableViewCell {
         }
     }
     
-
-}
-
-extension AASwipeTableViewCell {
+    //MARK: Handle swipe
     
-    func configureSwipe() {
+    fileprivate func configureSwipe() {
         let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePan(gesture:)))
         panGesture.delegate = self
         self.contentView.addGestureRecognizer(panGesture)
         
     }
-
+    
     
     override func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return true
     }
     
-    @objc func handlePan(gesture:UIPanGestureRecognizer) {
+    func handlePan(gesture:UIPanGestureRecognizer) {
         guard self.buttons.count > 0 else {
             return
         }
@@ -127,11 +129,11 @@ extension AASwipeTableViewCell {
         case .began:
             self.panBegan(location: location)
         case .changed:
-            self.panMoved(location: location)
+            self.panMoved(location: location, gestureRecognizer:gesture)
         case .cancelled, .ended, .failed:
-            self.panEnded()
+            self.panEnded(gestureRecognizer:gesture)
         default:
-            self.panEnded()
+            self.panEnded(gestureRecognizer:gesture)
         }
         
         
@@ -139,21 +141,15 @@ extension AASwipeTableViewCell {
     
     private func panBegan(location:CGPoint) {
         self.startOriginX = location.x + self.contentViewInset.left
-        self.oldTouchPoint = location
-    
+        
     }
-
-    private func panMoved(location:CGPoint) {
+    
+    private func panMoved(location:CGPoint, gestureRecognizer:UIPanGestureRecognizer) {
         //check if table isScrolled to prevent scrolling tableView and swiping cell
         guard let table = self.superview?.superview as? UITableView, !table.isDragging  else {
             return
         }
-        //check if location is scrolled to top/bottom or left right
-        if abs(oldTouchPoint.x - location.x) <= abs(oldTouchPoint.y - location.y) {
-            return
-        }
-        
-        self.oldTouchPoint = location
+        table.isScrollEnabled = false
         
         let movedDistance = location.x - self.startOriginX
         let swipedViewLocation = self.contentView.frame.origin.x + movedDistance
@@ -170,11 +166,25 @@ extension AASwipeTableViewCell {
         
     }
     
-    private func panEnded() {
+    private func panEnded(gestureRecognizer:UIPanGestureRecognizer) {
         //calculate if last position is near left or right side
-        let isCellSwipped = self.contentView.frame.origin.x < -buttonsContainerView.frame.size.width / 2
+        guard let table = self.superview?.superview as? UITableView, !table.isDragging  else {
+            return
+        }
+        table.isScrollEnabled = true
+        
+        let velocity = gestureRecognizer.velocity(in: self.contentView)
+        print(velocity)
+        
+        var isCellSwipped = self.contentView.frame.origin.x < -buttonsContainerView.frame.size.width / 2
+        if velocity.x > self.frame.size.width {
+            isCellSwipped = false
+        } else if velocity.x < -self.frame.size.width {
+            isCellSwipped = true
+        }
+        
         self.animate(toLeft: isCellSwipped)
-
+        
         self.startOriginX = 0
         
     }
@@ -196,6 +206,6 @@ extension AASwipeTableViewCell {
         
     }
     
-    
 }
+
 

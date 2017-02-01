@@ -14,7 +14,21 @@ enum Type {
     case slide
 }
 
+
+struct Animator {
+    let duration:TimeInterval
+    let delay:TimeInterval
+    let springDumping:CGFloat
+    let springVelocity:CGFloat
+    let initialSpring:CGFloat
+    let options:UIViewAnimationOptions
+    
+}
+
 class AASwipeTableViewCell: UITableViewCell {
+    
+    //customizing animation
+    var animator:Animator = Animator(duration: 0.5, delay: 0.0, springDumping: 0.5, springVelocity:1.0, initialSpring: 1.0, options:.allowUserInteraction)
     
     //tracking start location for calculating moved distance of touch
     fileprivate var startOriginX:CGFloat = 0
@@ -246,7 +260,8 @@ class AASwipeTableViewCell: UITableViewCell {
             customBackgroundPosition = -self.buttonsContainerView.frame.width
         }
         
-        UIView.animate(withDuration: 0.5, delay: 0.0, usingSpringWithDamping: 0.5, initialSpringVelocity: 1.0, options: .allowUserInteraction, animations: {
+        
+        UIView.animate(withDuration: self.animator.duration, delay: self.animator.delay, usingSpringWithDamping: self.animator.springDumping, initialSpringVelocity: self.animator.springVelocity, options: self.animator.options, animations: {
             self.contentView.frame.origin.x = customBackgroundPosition
             if self.type == .trail {
                 self.setTrailButtonsPosition()

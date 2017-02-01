@@ -31,7 +31,7 @@ class AASwipeTableViewCell: UITableViewCell {
     }
     
     //array of buttons that will be rendered and set with superView under contentView
-    private var buttons:[UIButton] = [] {
+    fileprivate var buttons:[UIButton] = [] {
         didSet {
             let _ = self.buttons.map{self.buttonsContainerView.addSubview($0)}
         }

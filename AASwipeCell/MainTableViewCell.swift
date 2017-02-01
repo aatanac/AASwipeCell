@@ -50,10 +50,22 @@ class MainTableViewCell: AASwipeTableViewCell {
         editButton.backgroundColor = UIColor.blue
         editButton.imageView?.contentMode = .scaleAspectFit
         
+        let deleteButton = UIButton()
+        deleteButton.setImage(#imageLiteral(resourceName: "deleteIcon"), for: .normal)
+        deleteButton.backgroundColor = UIColor.yellow
+        deleteButton.imageView?.contentMode = .scaleAspectFit
+        
+        let sendButton = UIButton()
+        sendButton.setImage(#imageLiteral(resourceName: "sendIcon"), for: .normal)
+        sendButton.backgroundColor = UIColor.gray
+        sendButton.imageView?.contentMode = .scaleAspectFit
+        
         addButton.addTarget(self, action: #selector(addButtonPressed), for: .touchUpInside)
         editButton.addTarget(self, action: #selector(editButtonPressed), for: .touchUpInside)
-        
-        self.setButtons(with: [addButton, editButton])
+        deleteButton.addTarget(self, action: #selector(deleteButtonPressed), for: .touchUpInside)
+        sendButton.addTarget(self, action: #selector(sendButtonPressed), for: .touchUpInside)
+
+        self.setButtons(with: [addButton, editButton, deleteButton, sendButton])
         
     }
     
@@ -63,6 +75,14 @@ class MainTableViewCell: AASwipeTableViewCell {
     
     @objc private func editButtonPressed() {
         print("Edit button pressed")
+    }
+    
+    @objc private func deleteButtonPressed() {
+        print("Delete button pressed")
+    }
+    
+    @objc private func sendButtonPressed() {
+        print("Send button pressed")
     }
     
 

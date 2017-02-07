@@ -41,7 +41,7 @@ class MainTableViewCell: AASwipeTableViewCell {
     
     func configureImageButtons() {
         //self.useOriginalSize = true
-        self.type = .slide
+        //self.type = .slide
         
         let addButton = UIButton()
         addButton.frame.size.width = 30

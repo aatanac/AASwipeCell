@@ -42,7 +42,7 @@ class MainTableViewController: UITableViewController {
         
         if indexPath.row % 2 == 0 {
             cell.configureImageButtons()
-            //cell.type = .slide
+            cell.type = .slide
         } else if indexPath.row % 3 == 0 {
             cell.configureButtons()
             cell.type = .´default´

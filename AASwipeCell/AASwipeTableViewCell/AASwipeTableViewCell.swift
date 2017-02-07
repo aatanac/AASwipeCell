@@ -70,7 +70,7 @@ class AASwipeTableViewCell: UITableViewCell {
             self.setupButtonBackgroundViews()
         }
     }
-    
+
     fileprivate var buttonBackgrounds:[UIView] = []
     
     fileprivate var startButtonViewPosition:CGFloat = 0
@@ -109,12 +109,6 @@ class AASwipeTableViewCell: UITableViewCell {
         //removing buttons to prepare clean view for new ones
         let _ = self.buttons.map{$0.removeFromSuperview()}
         let _ = self.buttonBackgrounds.map{$0.removeFromSuperview()}
-        self.contentViewInset = .zero
-        self.buttonsContainerViewInset = .zero
-        self.startButtonViewPosition = 0
-        self.type = .´default´
-        self.startOriginX = 0
-        self.animator = Animator(duration: 0.5, delay: 0.0, springDumping: 0.5, springVelocity:1.0, initialSpring: 1.0, options:.allowUserInteraction)
         
     }
     
@@ -182,12 +176,12 @@ class AASwipeTableViewCell: UITableViewCell {
         
     }
     
-    private func setTrailButtonsPosition() {
+    private func setTrailButtonContainerPosition() {
         self.buttonsContainerView.frame.origin.x = self.contentView.frame.origin.x + self.contentView.frame.size.width
     }
     
     private func setSlidingButtonsPosition() {
-        self.setTrailButtonsPosition()
+        self.setTrailButtonContainerPosition()
         let movedPercentage = (self.startButtonViewPosition - self.buttonsContainerView.frame.origin.x) / self.buttonsContainerView.frame.size.width
         
         for (i, button) in self.buttons.enumerated() {
@@ -271,7 +265,7 @@ class AASwipeTableViewCell: UITableViewCell {
         }
         
         if self.type == .trail {
-            self.setTrailButtonsPosition()
+            self.setTrailButtonContainerPosition()
         } else if self.type == .slide {
             self.setSlidingButtonsPosition()
         }
@@ -311,11 +305,10 @@ class AASwipeTableViewCell: UITableViewCell {
             customBackgroundPosition = -self.buttonsContainerView.frame.width + self.contentViewInset.left
         }
         
-        
         UIView.animate(withDuration: self.animator.duration, delay: self.animator.delay, usingSpringWithDamping: self.animator.springDumping, initialSpringVelocity: self.animator.springVelocity, options: self.animator.options, animations: {
             self.contentView.frame.origin.x = customBackgroundPosition
             if self.type == .trail {
-                self.setTrailButtonsPosition()
+                self.setTrailButtonContainerPosition()
             } else if self.type == .slide {
                 self.setSlidingButtonsPosition()
             }

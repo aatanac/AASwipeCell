@@ -77,6 +77,17 @@ class AASwipeTableViewCell: UITableViewCell {
     
     //superView for buttons
     var buttonsContainerView:UIView = UIView(frame: .zero)
+
+    var tableView: UITableView? {
+        // in iOS 11 tableView is superView, in lesser version its superView.supserView
+        if let table = self.superview as? UITableView {
+            return table
+        } else if let table = self.superview?.superview as? UITableView {
+            return table
+        } else {
+            return nil
+        }
+    }
         
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -247,7 +258,8 @@ class AASwipeTableViewCell: UITableViewCell {
     
     private func panMoved(location:CGPoint, gestureRecognizer:UIPanGestureRecognizer) {
         //check if table isScrolled to prevent scrolling tableView and swiping cell
-        guard let table = self.superview?.superview as? UITableView, !table.isDragging  else {
+        guard let table = self.tableView,
+            !table.isDragging  else {
             return
         }
         table.isScrollEnabled = false
@@ -276,7 +288,8 @@ class AASwipeTableViewCell: UITableViewCell {
     
     private func panEnded(gestureRecognizer:UIPanGestureRecognizer) {
         //calculate if last position is near left or right side
-        guard let table = self.superview?.superview as? UITableView, !table.isDragging  else {
+        guard let table = self.tableView,
+            !table.isDragging  else {
             return
         }
         table.isScrollEnabled = true
